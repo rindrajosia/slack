@@ -21,7 +21,8 @@ const Register = () => {
     email: "",
     password: "",
     passwordConfirmation: "",
-    errors: []
+    errors: [],
+    loading: false
   });
 
   const handleChange = (e) => {
@@ -39,14 +40,14 @@ const Register = () => {
       error = { message: "Tous les champs doivent etre remplis" };
       setState(prevState => ({
         ...prevState,
-        errors:errors.concat(error)
+        errors: errors.concat(error)
       }));
       return false;
     } else if (!isPasswordValid(state)) {
       error = { message: "Mot de Passe invalide" };
       setState(prevState => ({
         ...prevState,
-        errors:errors.concat(error)
+        errors: errors.concat(error)
       }));
       return false;
     } else {
@@ -77,19 +78,39 @@ const Register = () => {
 
 
   const handleSubmit = (e) => {
-    if (isValid()) {
-      e.preventDefault();
+    e.preventDefault();
 
+    if (isValid()) {
+      setState(prevState => ({
+        ...prevState,
+        errors: [],
+        loading: true
+      }));
       const auth = getAuth(db);
       createUserWithEmailAndPassword(auth, state.email, state.password)
       .then((userCredential) => {
         console.log(userCredential);
+        setState(prevState => ({
+          ...prevState,
+          loading: false
+        }));
       })
       .catch((error) => {
-        console.error(error);
+        setState(prevState => ({
+          ...prevState,
+          errors: prevState.errors.concat(error),
+          loading: false
+        }));
       });
     }
   }
+
+  const handleInputError = (errors, inputName) => {
+    return errors.some(error => error.message.toLowerCase().includes(inputName))
+      ? "error"
+      : "";
+  };
+
 
   return (
     <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -119,6 +140,7 @@ const Register = () => {
                 placeholder="Email Address"
                 onChange={handleChange}
                 value={state.email}
+                className={handleInputError(state.errors, "email")}
                 type="email"
               />
 
@@ -130,6 +152,7 @@ const Register = () => {
                 placeholder="Password"
                 onChange={handleChange}
                 value={state.password}
+                className={handleInputError(state.errors, "password")}
                 type="password"
               />
 
@@ -141,10 +164,17 @@ const Register = () => {
                 placeholder="Password Confirmation"
                 onChange={handleChange}
                 value={state.passwordConfirmation}
+                className={handleInputError(state.errors, "password")}
                 type="password"
               />
 
-              <Button color="red" fluid size="large">
+              <Button
+                disabled={state.loading}
+                className={state.loading ? "loading" : ""}
+                color="orange"
+                fluid
+                size="large"
+              >
                 Submit
               </Button>
             </Segment>
