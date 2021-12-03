@@ -21,6 +21,7 @@ const Register = () => {
     email: "",
     password: "",
     passwordConfirmation: "",
+    errors: []
   });
 
   const handleChange = (e) => {
@@ -30,17 +31,64 @@ const Register = () => {
     }));
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const isValid = () => {
+    let errors = [];
+    let error;
 
-    const auth = getAuth(db);
-    createUserWithEmailAndPassword(auth, state.email, state.password)
-    .then((userCredential) => {
-      console.log(userCredential);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+    if (isEmpty(state)) {
+      error = { message: "Tous les champs doivent etre remplis" };
+      setState(prevState => ({
+        ...prevState,
+        errors:errors.concat(error)
+      }));
+      return false;
+    } else if (!isPasswordValid(state)) {
+      error = { message: "Mot de Passe invalide" };
+      setState(prevState => ({
+        ...prevState,
+        errors:errors.concat(error)
+      }));
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const isEmpty = ({ username, email, password, passwordConfirmation }) => {
+    return (
+      !username.length ||
+      !email.length ||
+      !password.length ||
+      !passwordConfirmation.length
+    );
+  };
+
+  const isPasswordValid = ({ password, passwordConfirmation }) => {
+    if (password.length < 6 || passwordConfirmation.length < 6) {
+      return false;
+    } else if (password !== passwordConfirmation) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const showErrors = errors => errors.map((error, i) => <p key={i}>{error.message}</p>);
+
+
+  const handleSubmit = (e) => {
+    if (isValid()) {
+      e.preventDefault();
+
+      const auth = getAuth(db);
+      createUserWithEmailAndPassword(auth, state.email, state.password)
+      .then((userCredential) => {
+        console.log(userCredential);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    }
   }
 
   return (
@@ -101,6 +149,12 @@ const Register = () => {
               </Button>
             </Segment>
           </Form>
+          {state.errors.length > 0 && (
+            <Message error>
+              <h3>Error</h3>
+              {showErrors(state.errors)}
+            </Message>
+          )}
 
           <Message>
             Already a user? <Link to="/login">Login</Link>
