@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from "../../Actions";
+import { setUser, clearUser } from "../../Actions";
 import Spinner from "../../Utils/Spinner";
 
 import { useState, useEffect } from 'react';
@@ -37,6 +37,8 @@ const Login = () => {
         dispatch(setUser(user));
         console.log(user);
         navigate("/");
+      } else {
+        dispatch(clearUser());
       }
     });
   }, [])
