@@ -2,8 +2,11 @@ import React from "react";
 import firebase from "../../firebase";
 import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setCurrentChannel } from "../../Actions";
 
 const Channels = ({ currentUser }) => {
+  const dispatch = useDispatch();
   const [state, setState] = useState({
     user: currentUser,
     channels: [],
@@ -46,12 +49,16 @@ const Channels = ({ currentUser }) => {
     }
   };
 
+  const changeChannel = channel => {
+    dispatch(setCurrentChannel(channel));
+  };
+
   const displayChannels = channels =>
     channels.length > 0 &&
     channels.map(channel => (
       <Menu.Item
         key={channel.id}
-        onClick={() => console.log(channel)}
+        onClick={() => changeChannel(channel)}
         name={channel.name}
         style={{ opacity: 0.7 }}
       >
