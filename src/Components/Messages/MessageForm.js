@@ -24,7 +24,8 @@ const MessageForm = ({ messagesRef, currentChannel, currentUser }) => {
       user: {
         id: state.user.uid,
         name: state.user.displayName,
-        avatar: state.user.photoURL
+        avatar: state.user.photoURL,
+        channel: currentChannel.id
       },
       content: state.message
     };
