@@ -2,13 +2,15 @@ import React from "react";
 import { Grid, Header, Icon, Dropdown } from "semantic-ui-react";
 import firebase from "../../firebase";
 
-const UserPanel = () => {
+const UserPanel = ({ currentUser }) => {
+
+  console.log(currentUser);
   const dropdownOptions = () => [
     {
       key: "user",
       text: (
         <span>
-          Signed in as <strong>User</strong>
+          Signed in as <strong>{currentUser && currentUser.displayName}</strong>
         </span>
       ),
       disabled: true
