@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { setUser } from "../../Actions";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Grid,
   Form,
@@ -17,12 +20,23 @@ import firebase from "../../firebase";
 import { Link } from "react-router-dom";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [state, setState] = useState({
     email: "",
     password: "",
     errors: [],
     loading: false,
   });
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        dispatch(setUser(user));
+        navigate("/");
+      }
+    });
+  }, [])
 
   const handleChange = (e) => {
     setState(prevState => ({
@@ -49,6 +63,11 @@ const Login = () => {
         .signInWithEmailAndPassword(state.email, state.password)
         .then(signedInUser => {
           console.log(signedInUser);
+          setState(prevState => ({
+            ...prevState,
+            errors: [],
+            loading: false
+          }));
         })
         .catch(err => {
           console.error(err);

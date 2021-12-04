@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { setUser } from "../../Actions";
 import {
   Grid,
   Form,
@@ -16,6 +19,8 @@ import md5 from "md5";
 import { Link } from "react-router-dom";
 
 const Register = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [state, setState] = useState({
     username: "",
     email: "",
@@ -25,6 +30,15 @@ const Register = () => {
     loading: false,
     usersRef: firebase.database().ref("users")
   });
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        dispatch(setUser(user));
+        navigate("/");
+      }
+    });
+  }, [])
 
   const handleChange = (e) => {
     setState(prevState => ({
@@ -103,6 +117,11 @@ const Register = () => {
             .then(() => {
               saveUser(createdUser).then(() => {
                 console.log("user saved");
+                setState(prevState => ({
+                  ...prevState,
+                  errors: [],
+                  loading: false
+                }));
               });
             })
             .catch(err => {

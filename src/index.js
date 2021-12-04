@@ -6,15 +6,19 @@ import Login from './Components/Auth/Login';
 import Register from './Components/Auth/Register';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import reportWebVitals from './reportWebVitals';
+import { Provider } from "react-redux";
+import store from "./Store";
 
 const Root = () => (
-  <Router>
-    <Routes>
-      <Route exact path="/" element={<App />} />
-      <Route exact path="/login" element={<Login />} />
-      <Route exact path="/register" element={<Register />} />
-    </Routes>
-  </Router>
+  <Provider store={store}>
+    <Router>
+      <Routes>
+        <Route exact path="/" element={<App />} />
+        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/register" element={<Register />} />
+      </Routes>
+    </Router>
+  </Provider>
 );
 
 ReactDOM.render(<Root />, document.getElementById('root'));
