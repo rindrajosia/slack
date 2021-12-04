@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from "../../Actions";
 import {
   Grid,
@@ -14,11 +14,13 @@ import {
 
 import firebase from "../../firebase";
 import md5 from "md5";
+import Spinner from "../../Utils/Spinner";
 
 
 import { Link } from "react-router-dom";
 
 const Register = () => {
+  const isLoading = useSelector((state) => state.user.isLoading );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [state, setState] = useState({
@@ -158,7 +160,9 @@ const Register = () => {
   };
 
 
-  return (
+  return  isLoading ? (
+      <Spinner />
+    ) : (
     <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h2" icon color="red" textAlign="center">

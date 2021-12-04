@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from "../../Actions";
+import Spinner from "../../Utils/Spinner";
 
 import { useState, useEffect } from 'react';
 import {
@@ -21,6 +22,7 @@ import { Link } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.user.isLoading );
   const navigate = useNavigate();
   const [state, setState] = useState({
     email: "",
@@ -33,6 +35,7 @@ const Login = () => {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         dispatch(setUser(user));
+        console.log(user);
         navigate("/");
       }
     });
@@ -89,8 +92,10 @@ const Login = () => {
       : "";
   };
 
-
-  return (
+  console.log(isLoading)
+  return isLoading ? (
+      <Spinner />
+    ) : (
     <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h2" icon color="blue" textAlign="center">

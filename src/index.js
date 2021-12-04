@@ -9,19 +9,23 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
 import store from "./Store";
 
-const Root = () => (
+const Root = () => {
+  return (
+        <Routes>
+          <Route exact path="/" element={<App />} />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/register" element={<Register />} />
+        </Routes>
+    );
+}
+
+ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <Routes>
-        <Route exact path="/" element={<App />} />
-        <Route exact path="/login" element={<Login />} />
-        <Route exact path="/register" element={<Register />} />
-      </Routes>
+      <Root />
     </Router>
-  </Provider>
-);
-
-ReactDOM.render(<Root />, document.getElementById('root'));
+  </Provider>,
+  document.getElementById('root'));
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
