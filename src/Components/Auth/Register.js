@@ -9,9 +9,9 @@ import {
   Icon
 } from "semantic-ui-react";
 
-import db from "../../firebase";
+import firebase from "../../firebase";
+import md5 from "md5";
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 import { Link } from "react-router-dom";
 
@@ -22,7 +22,8 @@ const Register = () => {
     password: "",
     passwordConfirmation: "",
     errors: [],
-    loading: false
+    loading: false,
+    usersRef: firebase.database().ref("users")
   });
 
   const handleChange = (e) => {
@@ -86,24 +87,50 @@ const Register = () => {
         errors: [],
         loading: true
       }));
-      const auth = getAuth(db);
-      createUserWithEmailAndPassword(auth, state.email, state.password)
-      .then((userCredential) => {
-        console.log(userCredential);
-        setState(prevState => ({
-          ...prevState,
-          loading: false
-        }));
-      })
-      .catch((error) => {
-        setState(prevState => ({
-          ...prevState,
-          errors: prevState.errors.concat(error),
-          loading: false
-        }));
-      });
+
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(state.email, state.password)
+        .then(createdUser => {
+          console.log(createdUser);
+          createdUser.user
+            .updateProfile({
+              displayName: state.username,
+              photoURL: `http://gravatar.com/avatar/${md5(
+                createdUser.user.email
+              )}?d=identicon`
+            })
+            .then(() => {
+              saveUser(createdUser).then(() => {
+                console.log("user saved");
+              });
+            })
+            .catch(err => {
+              console.error(err);
+              setState(prevState => ({
+                ...prevState,
+                errors: prevState.errors.concat(err),
+                loading: false
+              }));
+            });
+        })
+        .catch(err => {
+          console.error(err);
+          setState(prevState => ({
+            ...prevState,
+            errors: prevState.errors.concat(err),
+            loading: false
+          }));
+        });
     }
   }
+
+  const saveUser = createdUser => {
+  return state.usersRef.child(createdUser.user.uid).set({
+    name: createdUser.user.displayName,
+    avatar: createdUser.user.photoURL
+  });
+};
 
   const handleInputError = (errors, inputName) => {
     return errors.some(error => error.message.toLowerCase().includes(inputName))
