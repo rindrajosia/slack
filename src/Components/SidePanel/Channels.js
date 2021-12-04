@@ -8,30 +8,41 @@ import { setCurrentChannel } from "../../Actions";
 const Channels = ({ currentUser }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState({
+    activeChannel: "",
     user: currentUser,
     channels: [],
     channelName: "",
     channelDetails: "",
     channelsRef: firebase.database().ref("channels"),
     modal: false,
+    firstLoad: true
   })
 
   useEffect(() => {
     addListeners();
+    return () => {
+      removeListeners();
+    }
   }, [])
+
 
   const addListeners = () => {
     let loadedChannels = [];
     state.channelsRef.on("child_added", snap => {
       loadedChannels.push(snap.val());
-      setState((prevState) => (
+      setState(
        {
-         ...prevState,
-         channels: loadedChannels
+         ...state,
+         channels: loadedChannels,
        }
-     ));
+     );
     });
   };
+
+  const removeListeners = () => {
+    state.channelsRef.off();
+  };
+
 
   const handleChange = event => {
     setState((prevState) => (
@@ -61,6 +72,7 @@ const Channels = ({ currentUser }) => {
         onClick={() => changeChannel(channel)}
         name={channel.name}
         style={{ opacity: 0.7 }}
+        active= {channel.id === state.activeChannel}
       >
         # {channel.name}
       </Menu.Item>
