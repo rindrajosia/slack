@@ -1,18 +1,67 @@
 import React from "react";
+import firebase from "../../firebase";
 import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
 import { useState } from 'react';
 
-const Channels = () => {
+const Channels = ({ currentUser }) => {
   const [state, setState] = useState({
+    user: currentUser,
     channels: [],
     channelName: "",
     channelDetails: "",
+    channelsRef: firebase.database().ref("channels"),
     modal: false,
   })
 
 
   const handleChange = event => {
-    setState({ [event.target.name]: event.target.value });
+    setState((prevState) => (
+     {
+       ...prevState,
+       [event.target.name]: event.target.value
+     }
+   ));
+  };
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    if (isFormValid(state)) {
+      addChannel();
+    }
+  };
+
+  const addChannel = () => {
+    const { channelsRef, channelName, channelDetails, user } = state;
+
+    const key = channelsRef.push().key;
+
+    const newChannel = {
+      id: key,
+      name: channelName,
+      details: channelDetails,
+      createdBy: {
+        name: user.displayName,
+        avatar: user.photoURL
+      }
+    };
+
+    channelsRef
+      .child(key)
+      .update(newChannel)
+      .then(() => {
+        setState((prevState) => (
+         {
+           ...prevState,
+           channelName: "",
+           channelDetails: "",
+         }
+       ));
+        closeModal();
+        console.log("channel added");
+      })
+      .catch(err => {
+        console.error(err);
+      });
   };
 
   const openModal = () => setState((prevState) => (
@@ -28,6 +77,9 @@ const Channels = () => {
       modal: false
     }
   ));
+
+  const isFormValid = ({ channelName, channelDetails }) =>
+    channelName && channelDetails;
 
     return (
       <React.Fragment>
@@ -67,7 +119,7 @@ const Channels = () => {
           </Modal.Content>
 
           <Modal.Actions>
-            <Button color="green" inverted>
+            <Button color="green" inverted onClick={handleSubmit} >
               <Icon name="checkmark" /> Add
             </Button>
             <Button color="red" inverted onClick={closeModal}>

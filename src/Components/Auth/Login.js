@@ -56,7 +56,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (isValid(state)) {
+    if (isValid()) {
       setState(prevState => ({
         ...prevState,
         errors: [],
@@ -86,7 +86,28 @@ const Login = () => {
     }
   }
 
-  const isValid = ({ email, password }) => email && password;
+
+  const isValid = () => {
+    let errors = [];
+    let error;
+
+    if (isEmpty(state)) {
+      error = { message: "Tous les champs doivent etre remplis" };
+      setState(prevState => ({
+        ...prevState,
+        errors: errors.concat(error)
+      }));
+      return false;
+    }
+    return true;
+  };
+
+  const isEmpty = ({ email, password }) => {
+    return (
+      !email.length ||
+      !password.length
+    );
+  };
 
   const handleInputError = (errors, inputName) => {
     return errors.some(error => error.message.toLowerCase().includes(inputName))
@@ -94,6 +115,7 @@ const Login = () => {
       : "";
   };
 
+  console.log(state.errors)
   console.log(isLoading)
   return isLoading ? (
       <Spinner />
