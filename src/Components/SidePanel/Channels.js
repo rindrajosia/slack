@@ -34,8 +34,11 @@ const Channels = ({ currentUser }) => {
        {
          ...state,
          channels: loadedChannels,
+         activeChannel: loadedChannels[0].id
        }
      );
+
+     console.log(loadedChannels[0].id)
     });
   };
 
@@ -62,6 +65,12 @@ const Channels = ({ currentUser }) => {
 
   const changeChannel = channel => {
     dispatch(setCurrentChannel(channel));
+    setState(
+     {
+       ...state,
+       activeChannel: channel.id
+     }
+   );
   };
 
   const displayChannels = channels =>
