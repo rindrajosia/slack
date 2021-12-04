@@ -30,8 +30,8 @@ const App = () => {
   }, [])
 
   console.log(currentUser);
-  const flag = currentUser == null || currentUser == undefined;
-  return isLoading && flag ? (
+  const flagUser = currentUser == null || currentUser == undefined
+  return isLoading && flagUser ? (
       <Spinner />
     ) : (
     <Grid columns="equal" className="app" style={{ background: "#eee" }}>
@@ -39,7 +39,9 @@ const App = () => {
       <SidePanel currentUser={currentUser} />
 
       <Grid.Column style={{ marginLeft: 320 }}>
-        <Messages />
+        <Messages
+        currentUser={currentUser}
+        />
       </Grid.Column>
 
       <Grid.Column width={4}>

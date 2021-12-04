@@ -37,7 +37,7 @@ const Channels = ({ currentUser }) => {
          activeChannel: loadedChannels[0].id
        }
      );
-
+     dispatch(setCurrentChannel(loadedChannels[0]));
      console.log(loadedChannels[0].id)
     });
   };
