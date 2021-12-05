@@ -19,14 +19,18 @@ const App = () => {
   const isLoading = useSelector((state) => state.user.isLoading );
   const currentUser = useSelector((state) => state.user.currentUser );
   useEffect(() => {
+    let mounted = true;
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        dispatch(setUser(user));
-        console.log(user);
-      } else {
-        navigate("/login");
+      if (mounted) {
+        if (user) {
+          dispatch(setUser(user));
+          console.log(user);
+        } else {
+          navigate("/login");
+        }
       }
     });
+    return () => mounted = false;
   }, [])
 
   console.log(currentUser);

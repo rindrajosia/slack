@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Segment, Comment } from "semantic-ui-react";
 import firebase from "../../firebase";
 import { useSelector } from 'react-redux';
@@ -8,7 +8,6 @@ import Message from "./Message";
 
 const Messages = ({ currentUser }) => {
   const currentChannel = useSelector((state) => state.channel.currentChannel );
-  const messageRef = useRef();
   const [state, setState] = useState({
     messagesRef: firebase.database().ref("messages"),
     messages: [],
@@ -23,8 +22,6 @@ const Messages = ({ currentUser }) => {
       console.log(currentChannel.id);
       addListeners(currentChannel.id);
     }
-
-    console.log(messageRef)
 
     return () => {
       removeListeners();
@@ -43,17 +40,17 @@ const Messages = ({ currentUser }) => {
   const addMessageListener = channelId => {
     let loadedMessages = [];
     state.messagesRef.child(channelId).on("child_added", snap => {
+      console.log(snap.key)
       loadedMessages.push(snap.val());
       console.log(loadedMessages.length)
-      messageRef.current = loadedMessages;
-      console.log(messageRef)
         setState({
           ...state,
           messages: loadedMessages,
           messagesLoading: false
         });
     })
-   if (messageRef.current !== undefined && channelId !== messageRef.current[0].user.channel){
+
+   if (loadedMessages.length == 0){
      setState({
        ...state,
        messages: [],

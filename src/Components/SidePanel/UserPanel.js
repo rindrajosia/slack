@@ -1,9 +1,11 @@
 import React from "react";
 import { Grid, Header, Icon, Dropdown, Image } from "semantic-ui-react";
 import firebase from "../../firebase";
+import { useDispatch } from 'react-redux';
+import { clearUserList } from "../../Actions";
 
 const UserPanel = ({ currentUser }) => {
-
+  const dispatch = useDispatch();
   console.log(currentUser);
   const dropdownOptions = () => [
     {
@@ -26,6 +28,7 @@ const UserPanel = ({ currentUser }) => {
   ];
 
   const handleSignout = () => {
+    dispatch(clearUserList());
     firebase
       .auth()
       .signOut()

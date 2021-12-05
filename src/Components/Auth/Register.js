@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from "../../Actions";
+import { setUser, clearUser } from "../../Actions";
 import {
   Grid,
   Form,
@@ -20,6 +20,7 @@ import Spinner from "../../Utils/Spinner";
 import { Link } from "react-router-dom";
 
 const Register = () => {
+  const ref = useRef();
   const isLoading = useSelector((state) => state.user.isLoading );
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,12 +35,19 @@ const Register = () => {
   });
 
   useEffect(() => {
+    let mounted = true;
+
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        dispatch(setUser(user));
-        navigate("/");
+      if (mounted) {
+        if (user) {
+          dispatch(setUser(user));
+          navigate("/");
+        } else {
+          dispatch(clearUser());
+        }
       }
     });
+    return () => mounted = false;
   }, [])
 
   const handleChange = (e) => {
@@ -147,11 +155,18 @@ const Register = () => {
   }
 
   const saveUser = createdUser => {
-  return state.usersRef.child(createdUser.user.uid).set({
-    name: createdUser.user.displayName,
-    avatar: createdUser.user.photoURL
-  });
-};
+    return state.usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL
+    });
+  };
+
+  const removeListeners = () => {
+    state.usersRef.off();
+  };
+
+
+
 
   const handleInputError = (errors, inputName) => {
     return errors.some(error => error.message.toLowerCase().includes(inputName))

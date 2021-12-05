@@ -32,15 +32,19 @@ const Login = () => {
   });
 
   useEffect(() => {
+    let mounted = true;
+
     firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        dispatch(setUser(user));
-        console.log(user);
-        navigate("/");
-      } else {
-        dispatch(clearUser());
+      if (mounted) {
+        if (user) {
+          dispatch(setUser(user));
+          navigate("/");
+        } else {
+          dispatch(clearUser());
+        }
       }
     });
+    return () => mounted = false;
   }, [])
 
   const handleChange = (e) => {
