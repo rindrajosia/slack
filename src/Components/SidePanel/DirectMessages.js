@@ -14,24 +14,20 @@ const DirectMessages = ({ currentUser }) => {
     presenceRef: firebase.database().ref("presence")
   })
 
+
+
   useEffect(() => {
-    if (currentUser) {
-      addListeners(currentUser.uid);
-    }
+    addListeners(currentUser.uid);
+    // eslint-disable-next-line
+  }, []);
 
-    return () => {
-      removeListeners();
-    }
-  }, [currentUser])
-
-  const removeListeners = () => {
-    state.usersRef.off();
-  };
 
   const addListeners = currentUserUid => {
     let loadedUsers = [];
+    console.log(currentUserUid);
 
     state.usersRef.on("child_added", snap => {
+      console.log(snap.val());
       if (currentUserUid !== snap.key) {
         let user = snap.val();
         user["uid"] = snap.key;
@@ -60,34 +56,8 @@ const DirectMessages = ({ currentUser }) => {
       }
     });
 
-    state.presenceRef.on("child_added", snap => {
-      if (currentUserUid !== snap.key) {
-        addStatusToUser(snap.key);
-      }
-    });
-
-    state.presenceRef.on("child_removed", snap => {
-      if (currentUserUid !== snap.key) {
-        addStatusToUser(snap.key, false);
-      }
-    });
   };
 
-  const addStatusToUser = (userId, connected = true) => {
-    const updatedUsers = state.users.reduce((acc, user) => {
-      if (user.uid === userId) {
-        user["status"] = `${connected ? "online" : "offline"}`;
-      }
-      return acc.concat(user);
-    }, []);
-
-    setState({
-      ...state,
-      users: updatedUsers
-    });
-  };
-
-  const isUserOnline = user => user.status === "online";
 
   const changeChannel = user => {
     const channelId = getChannelId(user.uid);
@@ -132,8 +102,8 @@ const DirectMessages = ({ currentUser }) => {
             style={{ opacity: 0.7, fontStyle: "italic" }}
           >
             <Icon
-              name="circle"
-              color= {isUserOnline(user) ? "green" : "red"}
+              name="spy"
+              color= "grey"
             />
             @ {user.name}
           </Menu.Item>

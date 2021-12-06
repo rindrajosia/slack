@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, clearUser } from "../../Actions";
@@ -20,7 +20,6 @@ import Spinner from "../../Utils/Spinner";
 import { Link } from "react-router-dom";
 
 const Register = () => {
-  const ref = useRef();
   const isLoading = useSelector((state) => state.user.isLoading );
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -48,6 +47,7 @@ const Register = () => {
       }
     });
     return () => mounted = false;
+    // eslint-disable-next-line
   }, [])
 
   const handleChange = (e) => {
@@ -159,10 +159,6 @@ const Register = () => {
       name: createdUser.user.displayName,
       avatar: createdUser.user.photoURL
     });
-  };
-
-  const removeListeners = () => {
-    state.usersRef.off();
   };
 
 

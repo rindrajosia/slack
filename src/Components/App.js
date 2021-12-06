@@ -8,10 +8,8 @@ import { setUser } from "../Actions";
 import Spinner from "../Utils/Spinner";
 import { useNavigate } from "react-router-dom";
 
-import ColorPanel from "./ColorPanel/ColorPanel";
 import SidePanel from "./SidePanel/SidePanel";
 import Messages from "./Messages/Messages";
-import MetaPanel from "./MetaPanel/MetaPanel";
 
 const App = () => {
   const navigate = useNavigate();
@@ -31,25 +29,22 @@ const App = () => {
       }
     });
     return () => mounted = false;
+    // eslint-disable-next-line
   }, [])
 
   console.log(currentUser);
-  const flagUser = currentUser == null || currentUser == undefined
+  const flagUser = currentUser === null || currentUser === undefined
   return isLoading && flagUser ? (
       <Spinner />
     ) : (
     <Grid columns="equal" className="app" style={{ background: "#eee" }}>
-      <ColorPanel />
+
       <SidePanel currentUser={currentUser} />
 
       <Grid.Column style={{ marginLeft: 320 }}>
         <Messages
         currentUser={currentUser}
         />
-      </Grid.Column>
-
-      <Grid.Column width={4}>
-        <MetaPanel />
       </Grid.Column>
     </Grid>
   );

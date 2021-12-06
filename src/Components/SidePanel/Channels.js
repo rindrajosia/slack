@@ -20,9 +20,7 @@ const Channels = ({ currentUser }) => {
 
   useEffect(() => {
     addListeners();
-    return () => {
-      removeListeners();
-    }
+    // eslint-disable-next-line
   }, [])
 
 
@@ -40,10 +38,6 @@ const Channels = ({ currentUser }) => {
      dispatch(setCurrentChannel(loadedChannels[0]));
      console.log(loadedChannels[0].id)
     });
-  };
-
-  const removeListeners = () => {
-    state.channelsRef.off();
   };
 
 
@@ -151,7 +145,6 @@ const Channels = ({ currentUser }) => {
           {displayChannels(state.channels)}
         </Menu.Menu>
 
-        {/* Add Channel Modal */}
         <Modal basic open={state.modal} onClose={closeModal}>
           <Modal.Header>Add a Channel</Modal.Header>
           <Modal.Content>

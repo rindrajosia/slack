@@ -26,7 +26,7 @@ const Messages = ({ currentUser }) => {
     return () => {
       removeListeners();
     }
-
+// eslint-disable-next-line
   }, [currentChannel])
 
   const addListeners = channelId => {
@@ -50,7 +50,7 @@ const Messages = ({ currentUser }) => {
         });
     })
 
-   if (loadedMessages.length == 0){
+   if (loadedMessages.length === 0){
      setState({
        ...state,
        messages: [],
