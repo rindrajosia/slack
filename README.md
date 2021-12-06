@@ -24,9 +24,8 @@ Type git clone and then paste the URL you previously copied to the clipboard.
 Open a new terminal window in your local machine and change the current directory to your cloned directory.
 
 Change the branch by using: git checkout slack
-Run npm install / npm i from the Terminal.
 
-after that npm run build from the terminal.
+after npm install / npm i from the Terminal.
 
 Finally npm start.
 
